@@ -1,0 +1,409 @@
+---
+openapi: 3.0.0
+info:
+  title: Task Manager API
+  version: 0.0.1
+servers:
+- url: https://virtserver.swaggerhub.com/manuelccosta/Task_API/0.0.1
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: configurations
+  description: Operations available to configure tasks
+- name: instances
+  description: Operations available to handle task instances
+paths:
+  /task/config/{id}:
+    get:
+      tags:
+      - configurations
+      parameters:
+      - name: id
+        in: path
+        description: target task configuration id to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Valid item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskConfig'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+    put:
+      tags:
+      - configurations
+      parameters:
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: target task configuration id to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Updated task configuration
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskConfig'
+        required: true
+      responses:
+        "200":
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskConfig'
+        "404":
+          description: Not Found
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+    delete:
+      tags:
+      - configurations
+      parameters:
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: id
+        in: path
+        description: target task configuration id to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Item deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskConfig'
+        "404":
+          description: Not Found
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+  /task/config:
+    get:
+      tags:
+      - configurations
+      parameters:
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: skip
+        in: query
+        description: number of records to skip for pagination
+        required: true
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: maximum number of records to return
+        required: true
+        style: form
+        explode: true
+        schema:
+          maximum: 50
+          minimum: 0
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Valid item
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskInstance'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+    post:
+      tags:
+      - configurations
+      parameters:
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: New task configuration
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskConfig'
+        required: true
+      responses:
+        "201":
+          description: Item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskConfig'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+  /task/instance:
+    get:
+      tags:
+      - instances
+      parameters:
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: skip
+        in: query
+        description: number of records to skip for pagination
+        required: true
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: maximum number of records to return
+        required: true
+        style: form
+        explode: true
+        schema:
+          maximum: 50
+          minimum: 0
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Valid item
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskInstance'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+    post:
+      tags:
+      - instances
+      parameters:
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: New task instance
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaskInstance'
+        required: true
+      responses:
+        "201":
+          description: Item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskInstance'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+  /task/instance/{id}:
+    put:
+      tags:
+      - instances
+      parameters:
+      - name: id
+        in: path
+        description: target task instance id to update
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: skip
+        in: query
+        description: number of records to skip for pagination
+        required: true
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: maximum number of records to return
+        required: true
+        style: form
+        explode: true
+        schema:
+          maximum: 50
+          minimum: 0
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TaskInstance'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+    delete:
+      tags:
+      - instances
+      parameters:
+      - name: id
+        in: path
+        description: target task instance id to delete
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Item deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskInstance'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+components:
+  schemas:
+    TaskConfig:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+        dueDate:
+          type: string
+          format: datetime
+        assignee:
+          type: string
+        formID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        market:
+          type: string
+    TaskInstance:
+      type: object
+      properties:
+        id:
+          type: integer
+        caseID:
+          type: integer
+        name:
+          type: string
+        dueDate:
+          type: string
+          format: datetime
+        startDate:
+          type: string
+          format: datetime
+        completionDate:
+          type: string
+          format: datetime
+        relationshipManager:
+          type: string
+        owner:
+          type: string
+        status:
+          type: string
+        taskConfigID:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851

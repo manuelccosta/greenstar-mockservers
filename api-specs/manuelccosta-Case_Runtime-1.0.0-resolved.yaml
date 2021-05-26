@@ -1,0 +1,280 @@
+---
+openapi: 3.0.0
+info:
+  title: Case Runtime REST API
+  description: Case Runtime rest api definition
+  contact:
+    email: mmcosta@kpmg.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/manuelccosta/Case_Runtime/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: developers
+  description: Operations available to regular developers
+paths:
+  /task/validate:
+    post:
+      tags:
+      - developers
+      summary: Validates a task
+      description: Validates if a task is valid or not
+      operationId: validateTask
+      parameters:
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: Form item to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        "200":
+          description: Valid item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        "400":
+          description: Invalid item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+  /section/validate:
+    post:
+      tags:
+      - developers
+      summary: Validates a section item
+      description: Adds an item to the system
+      operationId: validateSection
+      parameters:
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: section item to validate
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Section'
+      responses:
+        "200":
+          description: Valid item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        "400":
+          description: Invalid item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Section'
+        "401":
+          description: Unauthorized
+        "500":
+          description: Internal error
+  /task/submit:
+    post:
+      tags:
+      - developers
+      summary: Submits a form
+      description: Submits a form to case runtime
+      operationId: submitSection
+      parameters:
+      - name: key
+        in: header
+        description: unique identifier used to authenticate a user, developer, or calling program to an API
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+      requestBody:
+        description: form item to submit
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        "202":
+          description: Request has been accepted for processing but the processing has NOT been completed.
+        "401":
+          description: Unauthorized
+        "400":
+          description: invalid input, object invalid
+        "409":
+          description: (Conflict) client put the case into an impossible or inconsistent state
+        "500":
+          description: internal server error
+components:
+  schemas:
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        version:
+          type: integer
+        label:
+          type: string
+          example: Party name?
+        bdp:
+          type: string
+          example: party.legalName
+        value:
+          type: string
+          example: HSBC
+        format:
+          type: string
+          format: regex
+          example: ^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$
+        type:
+          type: string
+          example: TEXT
+        sequence:
+          type: integer
+          example: 1
+        options:
+          type: array
+          example:
+          - PT
+          - UK
+          - US
+          items:
+            type: string
+        instructions:
+          type: string
+          example: Some instructions
+        tooltip:
+          type: string
+          example: Tooltip help text
+        placeholder:
+          type: string
+          example: Company Name
+        required:
+          type: boolean
+          example: true
+        minLength:
+          type: integer
+          example: 0
+        maxLength:
+          type: integer
+          example: 10
+        visible:
+          type: boolean
+          example: true
+        active:
+          type: boolean
+          example: true
+        args:
+          type: array
+          example:
+          - party.legalName
+          items:
+            type: string
+    Section:
+      required:
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        version:
+          type: integer
+        sequence:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: ACME Corporation
+        valid:
+          type: boolean
+          example: true
+        active:
+          type: boolean
+          example: true
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Question'
+    Form:
+      required:
+      - name
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: ACME Corporation
+        active:
+          type: boolean
+          example: true
+        version:
+          type: string
+          example: 1.0.0
+        sections:
+          type: array
+          items:
+            $ref: '#/components/schemas/Section'
+    Task:
+      required:
+      - name
+      type: object
+      properties:
+        caseId:
+          type: integer
+          example: 3432
+        caseVersion:
+          type: string
+          example: "1.2"
+        caseFCCRating:
+          type: string
+          example: HIGH
+        caseCalculatedRating:
+          type: string
+          example: MEDIUM
+        assignTo:
+          type: string
+          format: username or group
+          example: mcosta
+        doneBy:
+          type: string
+          format: username
+          example: mcosta
+        doneOn:
+          type: string
+          format: datetime
+          example: 28/06/2021 12:00
+        name:
+          type: string
+          example: CDD Check
+        form:
+          $ref: '#/components/schemas/Form'
