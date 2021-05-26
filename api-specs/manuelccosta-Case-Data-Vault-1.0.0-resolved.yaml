@@ -1,0 +1,183 @@
+---
+openapi: 3.0.0
+info:
+  title: Case Data Vault Rest API
+  description: This is a simple API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: http://appian.greenstar.midas.euw2.dev.aws.cloud.hsbc:8083
+  description: Development Service
+- url: https://virtserver.swaggerhub.com/manuelccosta/Case-Data-Vault/1.0.0
+  description: SwaggerHub API Auto Mocking
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+paths:
+  /case:
+    get:
+      tags:
+      - developers
+      summary: Local case search
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      operationId: searchCase
+      parameters:
+      - name: search
+        in: header
+        description: pass an optional search string for looking up cases (FIQL Syntax)
+        required: false
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: ?search=relationshiptManager==jo*;createdOn=gt=20210301
+      - name: skip
+        in: query
+        description: number of records to skip for pagination
+        required: false
+        style: form
+        explode: true
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        description: maximum number of records to return
+        required: false
+        style: form
+        explode: true
+        schema:
+          maximum: 50
+          minimum: 0
+          type: integer
+          format: int32
+      - name: sort
+        in: query
+        description: The order in which the items in a response should be returned
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+          example: ?sort=createBy+DESC,createOn+ASC
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Case'
+        "400":
+          description: bad input parameter
+    put:
+      tags:
+      - admins
+      summary: updates a case
+      description: Adds an item to the system
+      operationId: updateCase
+      requestBody:
+        description: Case item to update
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Case'
+      responses:
+        "201":
+          description: item updated
+        "400":
+          description: invalid input, object invalid
+        "409":
+          description: an existing item already exists
+    post:
+      tags:
+      - admins
+      summary: adds a case item
+      description: Adds an item to the system
+      operationId: addInventory
+      requestBody:
+        description: Inventory item to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Case'
+      responses:
+        "201":
+          description: item created
+        "400":
+          description: invalid input, object invalid
+        "409":
+          description: an existing item already exists
+  /case/{id}:
+    get:
+      tags:
+      - developers
+      summary: Scoped case search
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      operationId: searchScopeCase
+      parameters:
+      - name: id
+        in: path
+        description: pass an optional search string for looking up inventory
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Case'
+        "400":
+          description: bad input parameter
+components:
+  schemas:
+    Case:
+      required:
+      - bdp
+      - companyName
+      - id
+      - status
+      type: object
+      properties:
+        id:
+          type: integer
+        version:
+          type: integer
+        CIN:
+          type: integer
+        regNumber:
+          type: integer
+        companyName:
+          type: string
+        RAMRiskRating:
+          type: string
+        customerRiskRating:
+          type: string
+        caseManager:
+          type: string
+        relationshipManager:
+          type: string
+        status:
+          type: string
+        dueDate:
+          type: string
+          format: datetime
+        data:
+          type: string
+          format: json
